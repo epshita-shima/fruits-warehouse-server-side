@@ -10,7 +10,6 @@ app.use(cors());
 app.use(express.json());
 
 
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ybx1l.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
@@ -56,21 +55,22 @@ async function run() {
         app.post('/productItem', async (req, res) => {
             const newItem = req.body;
             const result = await productCollection.insertOne(newItem)
+            res.send(result);
         })
+
+        //delete
+        app.delete('/productItem/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
+        })
+
     }
     finally {
 
     }
 }
 run().catch(console.dir);
-// client.connect(err => {
-//     const productCollection = client.db('emaJohn').collection('product');
-//     const collection = client.db("fruitsWare").collection("productCollection");
-//     // perform actions on the collection object
-//     console.log('mongo DB is Connected');
-//     client.close();
-// });
-
 
 app.get('/', (req, res) => {
     res.send('Fruit is running and waiting for warehouse');
